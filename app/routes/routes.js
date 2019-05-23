@@ -19,4 +19,15 @@ module.exports = function(app, db) {
             }
         });
     });
+
+    app.get('/validate-user', (req, res) => {
+        const details = {'userName': req.body.userName, 'password': req.body.password};
+        db.collection('users').findOne(details, (err, item) => {
+            if (err) {
+                res.send('error fetching scores');
+            } else {
+                res.send(item);
+            }
+        });
+    })
 }
