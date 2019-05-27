@@ -24,7 +24,7 @@ module.exports = function(app, db) {
         const details = {'userName': req.body.userName, 'password': req.body.password};
         db.collection('users').findOne(details, (err, item) => {
             if (err) {
-                res.send('error fetching scores');
+                res.send('error fetching user');
             } else {
                 res.send(item);
             }
