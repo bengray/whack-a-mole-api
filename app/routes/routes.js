@@ -10,8 +10,12 @@ module.exports = function(app, db) {
         })
     });
 
-    app.get('/scores/', (req, res) => {
-        db.collection('scores').find({}, {sort:{score:1}}).limit(5).toArray((err, docs) => {
+    app.get('/scores', (req, res) => {
+        db.collection('scores').find()
+        .sort({score: -1})
+        .collation({locale: "en_US", numericOrdering: true})
+        .limit(5)
+        .toArray((err, docs) => {
             if (err) {
                 res.send('error fetching scores');
             } else {
