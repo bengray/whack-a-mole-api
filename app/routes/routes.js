@@ -23,4 +23,26 @@ module.exports = function(app, db) {
             }
         });
     });
+
+    app.post('/user', (req, res) => {
+        const details = { userName: req.body.userName, password: req.body.password };
+        db.collection('users').insert(details, (err, result) => {
+            if (err) {
+                res.send('error saving user');
+            } else {
+                res.send(result.ops[0]);
+            }
+        })
+    });
+
+    app.get('/user', (req, res) => {	
+        const details = {userName: req.body.userName, password: req.body.password};	
+        db.collection('users').findOne(details, (err, item) => {	
+            if (err) {	
+                res.send('error fetching user');	
+            } else {	
+                res.send(item);	
+            }	
+        });	
+    });
 }
