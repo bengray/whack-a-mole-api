@@ -36,7 +36,7 @@ module.exports = function(app, db) {
     });
 
     app.get('/user', (req, res) => {	
-        const details = {userName: req.body.userName, password: req.body.password};	
+        const details = {userName: req.query.userName, password: req.query.password};	
         db.collection('users').findOne(details, (err, item) => {	
             if (err) {	
                 res.send('error fetching user');	
