@@ -1,3 +1,13 @@
+var passwordHash = require('password-hash');
+
+const hashPassword = (password) => {
+    return passwordHash.generate(password)
+}
+
+const isValidCredentials = (password = '', hash = '') => {
+    return passwordHash.verify(password, hash);
+}
+
 module.exports = function(app, db) {
     app.post('/scores', (req, res) => {
         const score = { userName: req.body.userName, score: req.body.score };
@@ -25,7 +35,7 @@ module.exports = function(app, db) {
     });
 
     app.post('/user', (req, res) => {
-        const details = { userName: req.body.userName, password: req.body.password };
+        const details = { userName: req.body.userName, password: hashPassword(req.body.password) };
         db.collection('users').insert(details, (err, result) => {
             if (err) {
                 res.send('error saving user');
@@ -35,14 +45,22 @@ module.exports = function(app, db) {
         })
     });
 
-    app.get('/user', (req, res) => {	
-        const details = {userName: req.query.userName, password: req.query.password};	
-        db.collection('users').findOne(details, (err, item) => {	
-            if (err) {	
-                res.send('error fetching user');	
-            } else {	
-                res.send(item);	
+    app.get('/user', (req, res) => {
+        db.collection('users').findOne({userName: req.query.userName}, (err, item) => {
+            if (err) {
+                res.send('no user found');	
+            } else {
+                if(item) {
+                    validCredentials = isValidCredentials(req.query.password, item.password);
+                    if(validCredentials) {
+                        res.send({userName: req.query.userName});
+                    } else {
+                        res.send();
+                    }
+                } else {
+                    res.send();
+                }
             }	
-        });	
+        });
     });
-}
+}   
