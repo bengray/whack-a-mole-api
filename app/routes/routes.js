@@ -35,14 +35,21 @@ module.exports = function(app, db) {
     });
 
     app.post('/user', (req, res) => {
-        const details = { userName: req.body.userName, password: hashPassword(req.body.password) };
-        db.collection('users').insert(details, (err, result) => {
-            if (err) {
-                res.send('error saving user');
+        db.collection('users').findOne({userName: req.body.userName}, (err, item) => {
+            if (item) {
+                res.send('exists');
             } else {
-                res.send(result.ops[0]);
+                const details = { userName: req.body.userName, password: hashPassword(req.body.password) };
+
+                db.collection('users').insert(details, (err, result) => {
+                    if (err) {
+                        res.send('error saving user');
+                    } else {
+                        res.send(result.ops[0]);
+                    }
+                });
             }
-        })
+        });
     });
 
     app.get('/user', (req, res) => {
